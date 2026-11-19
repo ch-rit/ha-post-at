@@ -1,6 +1,7 @@
 {
   "domain": "post_at",
   "name": "Österreichische Post",
+  "categories": ["productivity_information"],
   "codeowners": ["@ch-rit"],
   "config_flow": true,
   "documentation": "https://github.com/ch-rit/ha-post-at",

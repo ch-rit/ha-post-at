@@ -1,0 +1,13 @@
+{
+  "domain": "post_at",
+  "name": "Österreichische Post",
+  "codeowners": ["@ch-rit"],
+  "config_flow": true,
+  "documentation": "https://github.com/ch-rit/ha-post-at",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/ch-rit/ha-post-at/issues",
+  "loggers": ["post_at"],
+  "requirements": ["post-at==0.1.0"],
+  "version": "0.1.0"
+}

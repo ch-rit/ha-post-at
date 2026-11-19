@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an idea for the integration.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is an unofficial, AI-generated hobby project that relies on the private API of the Post app.
+        Features that the Post app itself does not offer are usually not possible.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to achieve?
+      description: Describe the problem or use case, not only the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Which entity, action, event or option would help? Is it available in the Post app?
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots of the Post app, links, anything else.

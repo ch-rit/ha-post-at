@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Python library (post-at)
+    url: https://github.com/ch-rit/post_at_lib/issues
+    about: Problems with the underlying post-at library itself belong there.
+  - name: Home Assistant community forum
+    url: https://community.home-assistant.io/
+    about: General Home Assistant questions.

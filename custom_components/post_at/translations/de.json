@@ -1,0 +1,338 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Melde dich mit der E-Mail-Adresse und dem Passwort deines Post-Kontos an. Das Passwort wird nur für die Anmeldung verwendet und nicht gespeichert.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        },
+        "data_description": {
+          "email": "Die E-Mail-Adresse deines Post-Kontos.",
+          "password": "Das Passwort deines Post-Kontos."
+        }
+      },
+      "browser": {
+        "title": "Anmeldung im Browser",
+        "description": "Der Post-Login verlangt einen zusätzlichen Schritt, zum Beispiel eine Multi-Faktor-Authentifizierung oder neue Nutzungsbedingungen. Bitte melde dich im Browser an:\n\n1. Öffne die Entwicklertools deines Browsers (F12), wechsle zum Tab **Netzwerk** und aktiviere **Log beibehalten**.\n2. Öffne die [Post-Anmeldeseite]({url}) und schließe die Anmeldung ab.\n3. Am Ende kann der Browser eine Adresse, die mit `msal228c4360-` beginnt, nicht öffnen. Kopiere diese vollständige Adresse aus dem **Location**-Header der letzten Anfrage an den Post-Login (oder aus der Adressleiste bzw. der Fehlerseite) und füge sie unten ein.\n\nDer Link gilt nur für einen Versuch.",
+        "data": {
+          "redirect_url": "Weiterleitungs-URL"
+        },
+        "data_description": {
+          "redirect_url": "Die vollständige Adresse, die mit `msal228c4360-` beginnt, inklusive des Parameters `code`."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneut anmelden",
+        "description": "Die Sitzung von {name} ist abgelaufen oder wurde widerrufen. Melde dich erneut mit deinem Post-Konto an.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        },
+        "data_description": {
+          "email": "Die E-Mail-Adresse deines Post-Kontos.",
+          "password": "Das Passwort deines Post-Kontos."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Ungültige E-Mail-Adresse oder ungültiges Passwort.",
+      "invalid_redirect_url": "Mit dieser Weiterleitungs-URL konnte die Anmeldung nicht abgeschlossen werden. Stelle sicher, dass du die vollständige Adresse inklusive Code kopiert hast, oder starte die Einrichtung neu, um einen neuen Anmeldelink zu erhalten.",
+      "cannot_connect": "Verbindung zum Post-Dienst fehlgeschlagen.",
+      "unknown": "Unerwarteter Fehler."
+    },
+    "abort": {
+      "already_configured": "Dieses Post-Konto ist bereits eingerichtet.",
+      "reauth_successful": "Die erneute Anmeldung war erfolgreich.",
+      "unique_id_mismatch": "Du hast dich mit einem anderen Post-Konto angemeldet. Melde dich mit dem ursprünglich eingerichteten Konto an."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Aktualisierungsintervall",
+          "keep_delivered_days": "Zugestellte Sendungen behalten"
+        },
+        "data_description": {
+          "scan_interval": "Wie oft die Sendungsliste abgerufen wird, in Minuten (mindestens 5).",
+          "keep_delivered_days": "Wie viele Tage der Sensor einer zugestellten Sendung erhalten bleibt (0 bis 30)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "incoming": {
+        "name": "Eingehende Sendungen",
+        "state_attributes": {
+          "shipments": {
+            "name": "Sendungen"
+          }
+        }
+      },
+      "outgoing": {
+        "name": "Ausgehende Sendungen",
+        "state_attributes": {
+          "shipments": {
+            "name": "Sendungen"
+          }
+        }
+      },
+      "ready_for_pickup": {
+        "name": "Abholbereit"
+      },
+      "shipment": {
+        "state": {
+          "aviso": "Angekündigt",
+          "delivery_hand_over": "Aufgegeben",
+          "in_distribution": "In Verteilung",
+          "in_delivery": "In Zustellung",
+          "delivered": "Zugestellt",
+          "unknown": "Unbekannt"
+        },
+        "state_attributes": {
+          "tracking_number": {
+            "name": "Sendungsnummer"
+          },
+          "sender": {
+            "name": "Absender"
+          },
+          "title": {
+            "name": "Bezeichnung"
+          },
+          "direction": {
+            "name": "Richtung",
+            "state": {
+              "incoming": "Eingehend",
+              "outgoing": "Ausgehend"
+            }
+          },
+          "state_key": {
+            "name": "Statusschlüssel"
+          },
+          "state_text": {
+            "name": "Statustext"
+          },
+          "last_event_description": {
+            "name": "Letztes Ereignis"
+          },
+          "last_event_timestamp": {
+            "name": "Zeitpunkt des letzten Ereignisses"
+          },
+          "estimated_delivery": {
+            "name": "Voraussichtliche Zustellung"
+          },
+          "delivery_type": {
+            "name": "Zustellart"
+          },
+          "weight": {
+            "name": "Gewicht"
+          },
+          "redirection": {
+            "name": "Umleitung",
+            "state": {
+              "place": "Abstellort",
+              "neighbor": "Nachbar",
+              "post_office": "Postfiliale",
+              "parcel_locker": "Abholstation"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "target": {
+      "options": {
+        "place": "Abstellort",
+        "neighbor": "Nachbar",
+        "post_office": "Postfiliale",
+        "parcel_locker": "Abholstation"
+      }
+    }
+  },
+  "services": {
+    "redirect_shipment": {
+      "name": "Sendung umleiten",
+      "description": "Leitet eine eingehende Sendung an einen Abstellort, einen Nachbarn, eine Postfiliale oder eine Abholstation um.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das Post-Konto. Nur nötig, wenn mehr als ein Konto eingerichtet ist."
+        },
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        },
+        "target": {
+          "name": "Ziel",
+          "description": "Wohin die Sendung zugestellt werden soll."
+        },
+        "place": {
+          "name": "Abstellort",
+          "description": "Wo die Zustellung die Sendung abstellen soll. Für das Ziel Abstellort erforderlich."
+        },
+        "description": {
+          "name": "Beschreibung",
+          "description": "Freitext-Hinweis für die Zustellung (nur Abstellort)."
+        },
+        "first_name": {
+          "name": "Vorname",
+          "description": "Vorname des Nachbarn. Für das Ziel Nachbar erforderlich."
+        },
+        "last_name": {
+          "name": "Nachname",
+          "description": "Nachname des Nachbarn. Für das Ziel Nachbar erforderlich."
+        },
+        "street": {
+          "name": "Straße",
+          "description": "Straße des Nachbarn. Für das Ziel Nachbar erforderlich."
+        },
+        "house_number": {
+          "name": "Hausnummer",
+          "description": "Hausnummer des Nachbarn (nur Nachbar)."
+        },
+        "door": {
+          "name": "Tür",
+          "description": "Türnummer des Nachbarn (nur Nachbar)."
+        },
+        "branch_key": {
+          "name": "Filiale",
+          "description": "Schlüssel der Postfiliale oder Abholstation. Standardmäßig die von der Post angebotene Filiale."
+        }
+      }
+    },
+    "reset_redirection": {
+      "name": "Umleitung zurücksetzen",
+      "description": "Hebt die Umleitung einer Sendung auf.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das Post-Konto. Nur nötig, wenn mehr als ein Konto eingerichtet ist."
+        },
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        },
+        "target": {
+          "name": "Ziel",
+          "description": "Die aufzuhebende Umleitung."
+        }
+      }
+    },
+    "get_redirection_options": {
+      "name": "Umleitungsoptionen abrufen",
+      "description": "Gibt zurück, welche Umleitungen für eine Sendung möglich sind, sowie die bekannten Abstellorte.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das Post-Konto. Nur nötig, wenn mehr als ein Konto eingerichtet ist."
+        },
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        }
+      }
+    },
+    "add_shipment": {
+      "name": "Sendung hinzufügen",
+      "description": "Fügt eine Sendung zu deinem Post-Konto hinzu.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das Post-Konto. Nur nötig, wenn mehr als ein Konto eingerichtet ist."
+        },
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        },
+        "outbound": {
+          "name": "Ausgehend",
+          "description": "Die Sendung als ausgehend statt eingehend hinzufügen."
+        }
+      }
+    },
+    "remove_shipment": {
+      "name": "Sendung entfernen",
+      "description": "Entfernt eine Sendung aus deinem Post-Konto.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das Post-Konto. Nur nötig, wenn mehr als ein Konto eingerichtet ist."
+        },
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        },
+        "outbound": {
+          "name": "Ausgehend",
+          "description": "Ob die Sendung als ausgehend hinzugefügt wurde."
+        }
+      }
+    },
+    "rename_shipment": {
+      "name": "Sendung umbenennen",
+      "description": "Gibt einer Sendung eine Bezeichnung.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das Post-Konto. Nur nötig, wenn mehr als ein Konto eingerichtet ist."
+        },
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        },
+        "title": {
+          "name": "Bezeichnung",
+          "description": "Neue Bezeichnung der Sendung."
+        }
+      }
+    },
+    "track_shipment": {
+      "name": "Sendung verfolgen",
+      "description": "Sucht eine beliebige Sendung über die öffentliche Sendungsverfolgung der Post. Keine Anmeldung nötig.",
+      "fields": {
+        "tracking_number": {
+          "name": "Sendungsnummer",
+          "description": "Sendungsnummer der Sendung."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "Die Anmeldung beim Post-Dienst ist fehlgeschlagen. Bitte melde dich erneut an."
+    },
+    "update_failed": {
+      "message": "Fehler beim Abrufen der Sendungen: {error}"
+    },
+    "api_error": {
+      "message": "Der Post-Dienst hat einen Fehler gemeldet: {error}"
+    },
+    "communication_error": {
+      "message": "Fehler bei der Kommunikation mit dem Post-Dienst: {error}"
+    },
+    "entry_not_found": {
+      "message": "Es wurde kein Österreichische-Post-Konto mit der Eintrags-ID {entry_id} gefunden."
+    },
+    "entry_not_loaded": {
+      "message": "Das Österreichische-Post-Konto {title} ist nicht geladen."
+    },
+    "no_loaded_entries": {
+      "message": "Es ist kein Österreichische-Post-Konto geladen."
+    },
+    "multiple_entries": {
+      "message": "Es ist mehr als ein Österreichische-Post-Konto geladen. Wähle eines mit config_entry_id aus."
+    },
+    "missing_fields": {
+      "message": "Das Ziel {target} erfordert: {fields}."
+    },
+    "unexpected_fields": {
+      "message": "Das Ziel {target} akzeptiert nicht: {fields}."
+    },
+    "shipment_not_found": {
+      "message": "Die Sendung {tracking_number} wurde in deinem Post-Konto nicht gefunden."
+    }
+  }
+}

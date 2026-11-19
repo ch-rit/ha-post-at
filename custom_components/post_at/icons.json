@@ -1,0 +1,49 @@
+{
+  "entity": {
+    "sensor": {
+      "incoming": {
+        "default": "mdi:package-down"
+      },
+      "outgoing": {
+        "default": "mdi:package-up"
+      },
+      "ready_for_pickup": {
+        "default": "mdi:store-clock"
+      },
+      "shipment": {
+        "default": "mdi:package-variant-closed",
+        "state": {
+          "aviso": "mdi:email-fast-outline",
+          "delivery_hand_over": "mdi:human-dolly",
+          "in_distribution": "mdi:warehouse",
+          "in_delivery": "mdi:truck-delivery",
+          "delivered": "mdi:package-variant-closed-check",
+          "unknown": "mdi:help-box"
+        }
+      }
+    }
+  },
+  "services": {
+    "redirect_shipment": {
+      "service": "mdi:directions-fork"
+    },
+    "reset_redirection": {
+      "service": "mdi:undo-variant"
+    },
+    "get_redirection_options": {
+      "service": "mdi:format-list-bulleted"
+    },
+    "add_shipment": {
+      "service": "mdi:package-variant-plus"
+    },
+    "remove_shipment": {
+      "service": "mdi:package-variant-minus"
+    },
+    "rename_shipment": {
+      "service": "mdi:rename-box"
+    },
+    "track_shipment": {
+      "service": "mdi:map-marker-path"
+    }
+  }
+}

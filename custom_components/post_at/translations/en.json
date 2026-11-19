@@ -1,0 +1,338 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Sign in with the e-mail address and password of your Post account. The password is only used to sign in and is not stored.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        },
+        "data_description": {
+          "email": "The e-mail address of your Post account.",
+          "password": "The password of your Post account."
+        }
+      },
+      "browser": {
+        "title": "Browser sign-in",
+        "description": "The Post login asks for an additional step, for example multi-factor authentication or new terms of use. Please sign in with your browser:\n\n1. Open the developer tools of your browser (F12), switch to the **Network** tab and enable **Preserve log**.\n2. Open the [Post sign-in page]({url}) and complete the sign-in.\n3. At the end the browser fails to open an address starting with `msal228c4360-`. Copy this complete address from the **Location** header of the last request to the Post login (or from the address bar or error page) and paste it below.\n\nThe link is valid for a single attempt.",
+        "data": {
+          "redirect_url": "Redirect URL"
+        },
+        "data_description": {
+          "redirect_url": "The complete address starting with `msal228c4360-`, including the `code` parameter."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "The session of {name} has expired or was revoked. Sign in again with your Post account.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        },
+        "data_description": {
+          "email": "The e-mail address of your Post account.",
+          "password": "The password of your Post account."
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid e-mail address or password.",
+      "invalid_redirect_url": "The sign-in could not be completed with this redirect URL. Make sure you copied the complete address including the code, or restart the setup to get a new sign-in link.",
+      "cannot_connect": "Failed to connect to the Post service.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This Post account is already configured.",
+      "reauth_successful": "Re-authentication was successful.",
+      "unique_id_mismatch": "You signed in with a different Post account. Sign in with the account that was originally set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "scan_interval": "Update interval",
+          "keep_delivered_days": "Keep delivered shipments"
+        },
+        "data_description": {
+          "scan_interval": "How often the shipment list is fetched, in minutes (at least 5).",
+          "keep_delivered_days": "How many days the sensor of a delivered shipment is kept (0 to 30)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "incoming": {
+        "name": "Incoming shipments",
+        "state_attributes": {
+          "shipments": {
+            "name": "Shipments"
+          }
+        }
+      },
+      "outgoing": {
+        "name": "Outgoing shipments",
+        "state_attributes": {
+          "shipments": {
+            "name": "Shipments"
+          }
+        }
+      },
+      "ready_for_pickup": {
+        "name": "Ready for pickup"
+      },
+      "shipment": {
+        "state": {
+          "aviso": "Announced",
+          "delivery_hand_over": "Handed over",
+          "in_distribution": "In distribution",
+          "in_delivery": "Out for delivery",
+          "delivered": "Delivered",
+          "unknown": "Unknown"
+        },
+        "state_attributes": {
+          "tracking_number": {
+            "name": "Tracking number"
+          },
+          "sender": {
+            "name": "Sender"
+          },
+          "title": {
+            "name": "Title"
+          },
+          "direction": {
+            "name": "Direction",
+            "state": {
+              "incoming": "Incoming",
+              "outgoing": "Outgoing"
+            }
+          },
+          "state_key": {
+            "name": "State key"
+          },
+          "state_text": {
+            "name": "Status text"
+          },
+          "last_event_description": {
+            "name": "Last event"
+          },
+          "last_event_timestamp": {
+            "name": "Last event time"
+          },
+          "estimated_delivery": {
+            "name": "Estimated delivery"
+          },
+          "delivery_type": {
+            "name": "Delivery type"
+          },
+          "weight": {
+            "name": "Weight"
+          },
+          "redirection": {
+            "name": "Redirection",
+            "state": {
+              "place": "Drop-off place",
+              "neighbor": "Neighbor",
+              "post_office": "Post office",
+              "parcel_locker": "Parcel locker"
+            }
+          }
+        }
+      }
+    }
+  },
+  "selector": {
+    "target": {
+      "options": {
+        "place": "Drop-off place",
+        "neighbor": "Neighbor",
+        "post_office": "Post office",
+        "parcel_locker": "Parcel locker"
+      }
+    }
+  },
+  "services": {
+    "redirect_shipment": {
+      "name": "Redirect shipment",
+      "description": "Redirects an incoming shipment to a drop-off place, a neighbor, a post office or a parcel locker.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The Post account. Only required if more than one account is configured."
+        },
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        },
+        "target": {
+          "name": "Target",
+          "description": "Where the shipment should be delivered."
+        },
+        "place": {
+          "name": "Drop-off place",
+          "description": "Where the carrier should leave the shipment. Required for the drop-off place target."
+        },
+        "description": {
+          "name": "Description",
+          "description": "Free-text note for the carrier (drop-off place only)."
+        },
+        "first_name": {
+          "name": "First name",
+          "description": "First name of the neighbor. Required for the neighbor target."
+        },
+        "last_name": {
+          "name": "Last name",
+          "description": "Last name of the neighbor. Required for the neighbor target."
+        },
+        "street": {
+          "name": "Street",
+          "description": "Street of the neighbor. Required for the neighbor target."
+        },
+        "house_number": {
+          "name": "House number",
+          "description": "House number of the neighbor (neighbor only)."
+        },
+        "door": {
+          "name": "Door",
+          "description": "Door number of the neighbor (neighbor only)."
+        },
+        "branch_key": {
+          "name": "Branch",
+          "description": "Key of the post office or parcel locker. Defaults to the branch the Post offers."
+        }
+      }
+    },
+    "reset_redirection": {
+      "name": "Reset redirection",
+      "description": "Cancels a redirection of a shipment.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The Post account. Only required if more than one account is configured."
+        },
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        },
+        "target": {
+          "name": "Target",
+          "description": "The redirection to cancel."
+        }
+      }
+    },
+    "get_redirection_options": {
+      "name": "Get redirection options",
+      "description": "Returns which redirections are available for a shipment, and the known drop-off places.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The Post account. Only required if more than one account is configured."
+        },
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        }
+      }
+    },
+    "add_shipment": {
+      "name": "Add shipment",
+      "description": "Adds a shipment to your Post account.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The Post account. Only required if more than one account is configured."
+        },
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        },
+        "outbound": {
+          "name": "Outgoing",
+          "description": "Add the shipment as outgoing instead of incoming."
+        }
+      }
+    },
+    "remove_shipment": {
+      "name": "Remove shipment",
+      "description": "Removes a shipment from your Post account.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The Post account. Only required if more than one account is configured."
+        },
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        },
+        "outbound": {
+          "name": "Outgoing",
+          "description": "Whether the shipment was added as outgoing."
+        }
+      }
+    },
+    "rename_shipment": {
+      "name": "Rename shipment",
+      "description": "Gives a shipment a title.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The Post account. Only required if more than one account is configured."
+        },
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        },
+        "title": {
+          "name": "Title",
+          "description": "New title of the shipment."
+        }
+      }
+    },
+    "track_shipment": {
+      "name": "Track shipment",
+      "description": "Looks up any shipment with the public Post tracking. No sign-in needed.",
+      "fields": {
+        "tracking_number": {
+          "name": "Tracking number",
+          "description": "Tracking number of the shipment."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "Authentication with the Post service failed. Please sign in again."
+    },
+    "update_failed": {
+      "message": "Error fetching the shipments: {error}"
+    },
+    "api_error": {
+      "message": "The Post service returned an error: {error}"
+    },
+    "communication_error": {
+      "message": "Error communicating with the Post service: {error}"
+    },
+    "entry_not_found": {
+      "message": "No Österreichische Post account with the entry ID {entry_id} was found."
+    },
+    "entry_not_loaded": {
+      "message": "The Österreichische Post account {title} is not loaded."
+    },
+    "no_loaded_entries": {
+      "message": "No Österreichische Post account is loaded."
+    },
+    "multiple_entries": {
+      "message": "More than one Österreichische Post account is loaded. Select one with config_entry_id."
+    },
+    "missing_fields": {
+      "message": "The target {target} requires: {fields}."
+    },
+    "unexpected_fields": {
+      "message": "The target {target} does not accept: {fields}."
+    },
+    "shipment_not_found": {
+      "message": "Shipment {tracking_number} was not found in your Post account."
+    }
+  }
+}

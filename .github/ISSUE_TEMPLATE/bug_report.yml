@@ -1,0 +1,80 @@
+name: Bug report
+description: Report a problem with the integration.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please remove personal data (tracking numbers, names, addresses, e-mail
+        addresses, tokens) from everything you paste here.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      description: Settings → About.
+      placeholder: "2026.11.0"
+    validations:
+      required: true
+  - type: input
+    id: integration_version
+    attributes:
+      label: Integration version
+      description: HACS → Österreichische Post, or `version` in `custom_components/post_at/manifest.json`.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation method
+      options:
+        - HACS
+        - Manual
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      multiple: true
+      options:
+        - Setup / sign-in
+        - Re-authentication
+        - Sensors
+        - Events
+        - Actions
+        - Other
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: |
+        Settings → Devices & services → Österreichische Post → ⋮ → Download diagnostics.
+        Tokens and personal data are redacted, but please check the file before attaching it here
+        (drag and drop the file into this field).
+  - type: textarea
+    id: logs
+    attributes:
+      label: Debug logs
+      description: |
+        Enable debug logging in `configuration.yaml`, restart, reproduce the problem and paste the
+        relevant log lines:
+
+        ```yaml
+        logger:
+          logs:
+            custom_components.post_at: debug
+            post_at: debug
+        ```
+      render: text
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

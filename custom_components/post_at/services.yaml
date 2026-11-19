@@ -1,0 +1,100 @@
+redirect_shipment:
+  fields:
+    config_entry_id: &config_entry_id
+      selector:
+        config_entry:
+          integration: post_at
+    tracking_number: &tracking_number
+      required: true
+      example: "1234567890123456789012"
+      selector:
+        text:
+    target: &target
+      required: true
+      example: place
+      selector:
+        select:
+          translation_key: target
+          options:
+            - place
+            - neighbor
+            - post_office
+            - parcel_locker
+    place:
+      example: Vor_Haustüre
+      selector:
+        select:
+          custom_value: true
+          options:
+            - Vor_Haustüre
+            - Vor_Wohnungstüre
+            - AufOderUnter_Briefkasten
+            - In_Garage
+            - sonstige
+    description:
+      example: "Behind the garden gate"
+      selector:
+        text:
+    first_name:
+      example: Maria
+      selector:
+        text:
+    last_name:
+      example: Muster
+      selector:
+        text:
+    street:
+      example: Musterstraße
+      selector:
+        text:
+    house_number:
+      example: "12"
+      selector:
+        text:
+    door:
+      example: "4"
+      selector:
+        text:
+    branch_key:
+      selector:
+        text:
+
+reset_redirection:
+  fields:
+    config_entry_id: *config_entry_id
+    tracking_number: *tracking_number
+    target: *target
+
+get_redirection_options:
+  fields:
+    config_entry_id: *config_entry_id
+    tracking_number: *tracking_number
+
+add_shipment:
+  fields:
+    config_entry_id: *config_entry_id
+    tracking_number: *tracking_number
+    outbound: &outbound
+      default: false
+      selector:
+        boolean:
+
+remove_shipment:
+  fields:
+    config_entry_id: *config_entry_id
+    tracking_number: *tracking_number
+    outbound: *outbound
+
+rename_shipment:
+  fields:
+    config_entry_id: *config_entry_id
+    tracking_number: *tracking_number
+    title:
+      required: true
+      example: New headphones
+      selector:
+        text:
+
+track_shipment:
+  fields:
+    tracking_number: *tracking_number

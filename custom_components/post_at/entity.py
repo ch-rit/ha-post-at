@@ -22,6 +22,26 @@ def parcel_device_identifier(entry: PostAtConfigEntry, tracking_number: str) -> 
     return f"{entry.entry_id}_{tracking_number}"
 
 
+def account_device_info(coordinator: PostAtCoordinator) -> DeviceInfo:
+    """Return the device info of the Post account."""
+    return DeviceInfo(
+        identifiers={(DOMAIN, coordinator.account_id)},
+        name=coordinator.config_entry.title,
+        manufacturer=MANUFACTURER,
+        entry_type=DeviceEntryType.SERVICE,
+        configuration_url="https://www.post.at/",
+    )
+
+
+@callback
+def async_register_account_device(hass: HomeAssistant, coordinator: PostAtCoordinator) -> None:
+    """Register the account device so parcel devices can link to it by id."""
+    device = dr.async_get(hass).async_get_or_create(
+        config_entry_id=coordinator.config_entry.entry_id, **account_device_info(coordinator)
+    )
+    coordinator.account_device_id = device.id
+
+
 class PostAtEntity(CoordinatorEntity[PostAtCoordinator]):
     """An entity of a Post account, on the account device."""
 
@@ -31,13 +51,7 @@ class PostAtEntity(CoordinatorEntity[PostAtCoordinator]):
         """Initialize the entity."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.account_id}_{key}"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, coordinator.account_id)},
-            name=coordinator.config_entry.title,
-            manufacturer=MANUFACTURER,
-            entry_type=DeviceEntryType.SERVICE,
-            configuration_url="https://www.post.at/",
-        )
+        self._attr_device_info = account_device_info(coordinator)
 
 
 class PostAtShipmentEntity(PostAtEntity):
@@ -58,7 +72,7 @@ class PostAtShipmentEntity(PostAtEntity):
             model=shipment.product_category if shipment else None,
             manufacturer=MANUFACTURER,
             entry_type=DeviceEntryType.SERVICE,
-            via_device=(DOMAIN, coordinator.account_id),
+            via_device_id=coordinator.account_device_id,
         )
 
     @callback

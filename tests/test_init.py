@@ -90,7 +90,8 @@ async def test_update_auth_failed_starts_reauth(
     mock_client.shipments.side_effect = AuthenticationError("invalid_grant")
     freezer.tick(timedelta(minutes=15))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    # Timer-driven refreshes run as config entry background tasks.
+    await hass.async_block_till_done(wait_background_tasks=True)
 
     flows = hass.config_entries.flow.async_progress()
     assert len(flows) == 1
@@ -109,14 +110,14 @@ async def test_update_failed(
     mock_client.shipments.side_effect = ApiError(502, "bad gateway", "op")
     freezer.tick(timedelta(minutes=15))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
     assert hass.states.get(entity_id(hass, "incoming")).state == STATE_UNAVAILABLE
     assert not hass.config_entries.flow.async_progress()
 
     mock_client.shipments.side_effect = None
     freezer.tick(timedelta(minutes=15))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
     assert hass.states.get(entity_id(hass, "incoming")).state == "3"
 
 

@@ -257,6 +257,8 @@ class PostAtCoordinator(DataUpdateCoordinator[PostAtData]):
             ),
         )
         self.account_id = entry.unique_id or entry.entry_id
+        # Set by async_setup_entry once the account device is registered.
+        self.account_device_id: str | None = None
         self._client: PostAtClient | None = None
         self._lock = hass.data.setdefault(DATA_LOCKS, {}).setdefault(
             entry.entry_id, asyncio.Lock()

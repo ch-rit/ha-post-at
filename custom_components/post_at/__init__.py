@@ -9,7 +9,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN
 from .coordinator import DATA_LOCKS, PostAtConfigEntry, PostAtCoordinator
-from .entity import async_setup_parcel_devices
+from .entity import async_register_account_device, async_setup_parcel_devices
 from .services import async_setup_services
 
 PLATFORMS: list[Platform] = [Platform.SELECT, Platform.SENSOR]
@@ -39,6 +39,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: PostAtConfigEntry) -> bo
     )
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
+    async_register_account_device(hass, coordinator)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # After the platforms, so entities are removed before their parcel device.
     async_setup_parcel_devices(hass, entry)

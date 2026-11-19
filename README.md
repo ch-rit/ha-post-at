@@ -43,7 +43,7 @@ Built on the [`post-at-lib`](https://pypi.org/project/post-at-lib/) Python libra
 
 ## Requirements
 
-- Home Assistant **2026.1** or newer (tested with 2026.11).
+- Home Assistant **2026.8** or newer (tested with 2026.10).
 - An account for the Österreichische Post app / post.at ("Post Login").
 - Internet access from Home Assistant (cloud polling).
 

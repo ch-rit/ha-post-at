@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ch-rit/ha-post-at/main/custom_components/post_at/brand/logo@2x.png" alt="Österreichische Post logo" width="240">
+  <img src="https://github.com/ch-rit/ha-post-at/blob/main/custom_components/post_at/brand/logo@2x.png?raw=true" alt="Österreichische Post logo" width="240">
 </p>
 
 # Österreichische Post for Home Assistant

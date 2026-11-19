@@ -44,10 +44,21 @@ async def async_get_config_entry_diagnostics(
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
     coordinator = entry.runtime_data
+    data = coordinator.data
     return {
         "entry": async_redact_data(entry.as_dict(), TO_REDACT_ENTRY),
         "last_update_success": coordinator.last_update_success,
         "data": async_redact_data(
-            coordinator.data.model_dump(mode="json", by_alias=False), TO_REDACT_DATA
+            {
+                "shipments": data.shipments.model_dump(mode="json", by_alias=False),
+                # A list: the dict is keyed by tracking number.
+                "redirections": [
+                    redirections.model_dump(mode="json", by_alias=False)
+                    for redirections in data.redirections.values()
+                ],
+                "branch_names": data.branch_names,
+                "places": [place.model_dump(mode="json") for place in data.places],
+            },
+            TO_REDACT_DATA,
         ),
     }

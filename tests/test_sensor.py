@@ -75,7 +75,7 @@ async def test_shipment_sensors(hass: HomeAssistant, init_integration: MockConfi
         "delivered",
         "unknown",
     ]
-    assert state.attributes[ATTR_FRIENDLY_NAME] == f"{EMAIL} Headphones"
+    assert state.attributes[ATTR_FRIENDLY_NAME] == "Headphones Status"
     assert state.attributes["tracking_number"] == "1001"
     assert state.attributes["sender"] == "Shop GmbH"
     assert state.attributes["title"] == "Headphones"
@@ -91,9 +91,9 @@ async def test_shipment_sensors(hass: HomeAssistant, init_integration: MockConfi
 
     # Named after the sender without a title, after the tracking number without either.
     assert hass.states.get(entity_ids["1002"]).attributes[ATTR_FRIENDLY_NAME] == (
-        f"{EMAIL} Shop GmbH"
+        "Shop GmbH Status"
     )
-    assert hass.states.get(entity_ids["1004"]).attributes[ATTR_FRIENDLY_NAME] == f"{EMAIL} 1004"
+    assert hass.states.get(entity_ids["1004"]).attributes[ATTR_FRIENDLY_NAME] == "1004 Status"
     assert hass.states.get(entity_ids["1002"]).attributes["redirection"] is None
 
     outgoing = hass.states.get(entity_ids["1003"])
@@ -145,7 +145,7 @@ async def test_dynamic_shipment_sensors(
     assert hass.states.get(after["1007"]).state == "aviso"
     # Renaming a shipment renames its sensor.
     assert hass.states.get(after["1001"]).attributes[ATTR_FRIENDLY_NAME] == (
-        f"{EMAIL} New headphones"
+        "New headphones Status"
     )
     assert hass.states.get(entity_id(hass, "incoming")).state == "2"
 

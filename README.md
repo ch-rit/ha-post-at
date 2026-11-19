@@ -103,20 +103,32 @@ Select **Configure** on the integration entry to change:
 
 ## Entities
 
-All entities belong to one device per Post account.
+Each Post account is a device with the account-wide sensors. Every tracked parcel gets its own device
+below it, named after the parcel's title, the sender or the tracking number (renaming the shipment
+renames the device).
+
+**Account device**
 
 | Entity | State | Attributes |
 | --- | --- | --- |
 | Incoming shipments | Number of incoming shipments not yet delivered | `shipments`: list of `tracking_number`, `title`, `sender`, `state` (see below), `state_text`, `last_update`, `estimated_delivery` |
 | Outgoing shipments | Number of outgoing shipments not yet delivered | `shipments` (same as above) |
 | Ready for pickup | Number of undelivered shipments waiting for pickup at a post office or parcel locker | — |
-| One sensor per shipment | Tracking state (see below) | `tracking_number`, `sender`, `title`, `direction` (`incoming`/`outgoing`), `state_key` (raw Post state), `state_text`, `last_event_description`, `last_event_timestamp`, `estimated_delivery`, `delivery_type`, `weight`, `redirection` (`place`, `neighbor`, `post_office`, `parcel_locker` or empty) |
 
-Per-shipment sensors are created for every shipment that is not delivered yet, or that was delivered
-within the last `keep_delivered_days` days. They are named after the shipment's title, the sender or
-the tracking number, and are removed automatically once the shipment drops out.
+**Parcel device**
 
-Their state is an enum of the Post tracking states (translated in the UI):
+| Entity | Exists for | State | Attributes |
+| --- | --- | --- | --- |
+| Status (sensor) | Every parcel | Tracking state (see below) | `tracking_number`, `sender`, `title`, `direction` (`incoming`/`outgoing`), `state_key` (raw Post state), `state_text`, `last_event_description`, `last_event_timestamp`, `estimated_delivery`, `delivery_type`, `weight`, `redirection` (`place`, `neighbor`, `post_office`, `parcel_locker` or empty) |
+| Delivery option (select) | Incoming parcels not delivered yet | Standard delivery or a drop-off place, see [Redirecting from the UI](#redirecting-from-the-ui) | `unavailability_reasons` (per redirection type, e.g. `PLACE: [SIGNATURE]`), `redirect_possible` |
+| Pickup location (select) | Incoming parcels not delivered yet | The post office or parcel locker the parcel is redirected to, if any | — |
+
+Parcel devices are created for every shipment that is not delivered yet, or that was delivered within
+the last `keep_delivered_days` days. Once a parcel is delivered its selects are removed; once it drops out
+completely the device is removed together with its entities. The Status sensor keeps the entity id of
+the per-shipment sensor of earlier versions.
+
+The Status sensor's state is an enum of the Post tracking states (translated in the UI):
 
 | State | Meaning |
 | --- | --- |
@@ -163,10 +175,45 @@ actions:
         {{ trigger.event.data.state_text }}
 ```
 
+## Redirecting from the UI
+
+The selects on a parcel device let you redirect incoming parcels without writing an action — on the
+device page, in a dashboard tile, or as a `select.select_option` action in automations.
+
+**Delivery option** offers:
+
+| Option | Meaning |
+| --- | --- |
+| `standard` | Standard delivery; selecting it cancels the current redirection |
+| `front_door` | Leave it in front of the house door (`Vor_Haustüre`) |
+| `apartment_door` | Leave it in front of the apartment door (`Vor_Wohnungstüre`) |
+| `mailbox` | Leave it on or under the mailbox (`AufOderUnter_Briefkasten`) |
+| `garage` | Leave it in the garage (`In_Garage`) |
+
+The drop-off places are only offered while the Post allows a place redirection for the parcel
+(see the `unavailability_reasons` attribute otherwise). A few more values only appear when such a
+redirection is already active, for example set in the Post app or with an action, and cannot be chosen
+here: `drop_off_place` (a drop-off place whose exact location is not known to Home Assistant),
+`neighbor`, `post_office` and `parcel_locker`. Choose `standard` to cancel them.
+
+**Pickup location** lists the post offices and parcel lockers the Post offers for the parcel, for example
+"Post office: …" or "Parcel locker: …", or "Nearest post office" / "Nearest parcel locker" when the Post
+does not name a branch. It is unavailable while neither is possible.
+
+Handing a parcel to a neighbour and "another place" with a free-text description (`sonstige`) need more
+input, so they stay available through [`post_at.redirect_shipment`](#post_atredirect_shipment) only.
+
+> [!CAUTION]
+> Redirects and redirect resets — from the selects as well as from the actions — have only been tested
+> against a mocked API so far, not against the live Post service. Other account actions (such as renaming
+> a shipment) have been verified live. Check the result in the Post app after your first redirect.
+
 ## Actions
 
 All actions that work on your account accept an optional `config_entry_id`. It is only required when you
-have configured more than one Post account.
+have configured more than one Post account. For the common redirects you can also use the selects
+described in [Redirecting from the UI](#redirecting-from-the-ui); the actions remain for automations and
+for redirects the selects do not cover (neighbour, other place with a description, a specific branch key).
 
 ### `post_at.redirect_shipment`
 

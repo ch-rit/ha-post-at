@@ -6,7 +6,7 @@ from collections.abc import Callable
 from typing import Any, Final
 
 import httpx
-from post_at import AuthenticationError, PostAtClient, PostAtError
+from post_at import PostAtClient, PostAtError
 from post_at.models import Shipment
 import voluptuous as vol
 
@@ -19,7 +19,7 @@ from homeassistant.core import (
     SupportsResponse,
     callback,
 )
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 
 from .const import (
@@ -30,7 +30,7 @@ from .const import (
     TARGET_POST_OFFICE,
     TARGETS,
 )
-from .coordinator import PostAtConfigEntry, PostAtCoordinator
+from .coordinator import PostAtConfigEntry, PostAtCoordinator, library_error
 
 SERVICE_REDIRECT_SHIPMENT: Final = "redirect_shipment"
 SERVICE_RESET_REDIRECTION: Final = "reset_redirection"
@@ -126,32 +126,10 @@ def _async_get_coordinator(call: ServiceCall) -> PostAtCoordinator:
     return entries[0].runtime_data
 
 
-def _library_error(err: Exception) -> HomeAssistantError:
-    """Map a library or transport error to a translated error."""
-    if isinstance(err, AuthenticationError):
-        return HomeAssistantError(translation_domain=DOMAIN, translation_key="auth_failed")
-    return HomeAssistantError(
-        translation_domain=DOMAIN,
-        translation_key=(
-            "communication_error" if isinstance(err, httpx.HTTPError) else "api_error"
-        ),
-        translation_placeholders={"error": str(err)},
-    )
-
-
-async def _async_call[T](
-    coordinator: PostAtCoordinator, func: Callable[[PostAtClient], T]
-) -> T:
-    try:
-        return await coordinator.async_call(func)
-    except (PostAtError, httpx.HTTPError) as err:
-        raise _library_error(err) from err
-
-
 async def _async_mutate(call: ServiceCall, func: Callable[[PostAtClient], Any]) -> None:
     """Change a shipment, then refresh the shipment list."""
     coordinator = _async_get_coordinator(call)
-    await _async_call(coordinator, func)
+    await coordinator.async_run(func)
     await coordinator.async_request_refresh()
 
 
@@ -227,8 +205,12 @@ async def _async_rename_shipment(call: ServiceCall) -> None:
 async def _async_get_redirection_options(call: ServiceCall) -> ServiceResponse:
     number: str = call.data[ATTR_TRACKING_NUMBER]
     coordinator = _async_get_coordinator(call)
-    redirections, places = await _async_call(
-        coordinator, lambda client: (client.possible_redirections(number), client.places())
+    cached_places = coordinator.data.places
+    redirections, places = await coordinator.async_run(
+        lambda client: (
+            client.possible_redirections(number),
+            cached_places or client.places(),
+        )
     )
     if redirections is None:
         raise ServiceValidationError(
@@ -261,7 +243,7 @@ async def _async_track_shipment(call: ServiceCall) -> ServiceResponse:
             _track, call.data[ATTR_TRACKING_NUMBER]
         )
     except (PostAtError, httpx.HTTPError) as err:
-        raise _library_error(err) from err
+        raise library_error(err) from err
     if shipment is None:
         return {}
     result = shipment.model_dump(mode="json", by_alias=False)

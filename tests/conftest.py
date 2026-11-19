@@ -11,7 +11,7 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from post_at import PostAtClient, Session
-from post_at.models import ShipmentList
+from post_at.models import Branch, Place, ShipmentList, ShipmentRedirections
 import pytest
 
 from homeassistant.core import HomeAssistant
@@ -81,6 +81,7 @@ def shipment_data(
         "weight": 1.5,
         "estimatedDeliveryDateText": "Mo, 23.11.",
         "deliveryType": "DELIVERY",
+        "produktkategorie": "Paket",
         "sendungsEvents": events,
         "packageRedirections": [],
         **extra,
@@ -125,9 +126,61 @@ def default_shipments() -> ShipmentList:
     )
 
 
-def entity_id(hass: HomeAssistant, key: str) -> str | None:
-    """Return the entity id of a sensor by its unique id suffix."""
-    return er.async_get(hass).async_get_entity_id("sensor", DOMAIN, f"{ACCOUNT_ID}_{key}")
+def make_redirections(
+    number: str,
+    *,
+    current: str = "DEFAULT",
+    place: str = "ENABLED",
+    neighbor: str = "DISABLED",
+    post_office: str = "ENABLED",
+    parcel_locker: str = "ENABLED",
+    post_office_branches: list[str] | None = None,
+    parcel_locker_branches: list[str] | None = None,
+) -> ShipmentRedirections:
+    """Return redirection options; ``current`` is the type currently set."""
+    states = {
+        "NEIGHBOR": neighbor,
+        "PLACE": place,
+        "POST_OFFICE": post_office,
+        "PARCEL_LOCKER": parcel_locker,
+        "DEFAULT": "ENABLED",
+    }
+    return ShipmentRedirections.model_validate(
+        {
+            "activeIdentityCode": number,
+            "possibleRedirections": {
+                "branchesPostOffice": post_office_branches,
+                "branchesParcelLocker": parcel_locker_branches,
+            },
+            "redirectionInformation": {
+                "redirectionOptions": [
+                    {
+                        "type": kind,
+                        "state": state,
+                        "current": kind == current,
+                        "unavailabilityReasons": [] if state == "ENABLED" else ["SIGNATURE"],
+                    }
+                    for kind, state in states.items()
+                ]
+            },
+        }
+    )
+
+
+def make_branch(key: str, name: str) -> Branch:
+    """Return a branch."""
+    return Branch.model_validate({"branchkey": key, "type": "FILIALE", "longname": name})
+
+
+PLACES = [
+    Place(key="Vor_Haustüre", text="Vor der Haustüre"),
+    Place(key="sonstige", text="Sonstiger Ort"),
+]
+
+
+def entity_id(hass: HomeAssistant, key: str, domain: str = "sensor") -> str | None:
+    """Return the entity id of an entity by its unique id suffix."""
+    return er.async_get(hass).async_get_entity_id(domain, DOMAIN, f"{ACCOUNT_ID}_{key}")
 
 
 @pytest.fixture(autouse=True)
@@ -158,6 +211,11 @@ def mock_client_class() -> Generator[MagicMock]:
         client = client_class.return_value
         client.__enter__.return_value = client
         client.shipments.return_value = default_shipments()
+        client.possible_redirections.side_effect = lambda number: make_redirections(
+            number, post_office_branches=["101"]
+        )
+        client.places.return_value = PLACES
+        client.branches.return_value = [make_branch("101", "Postfiliale Landstraße")]
         yield client_class
 
 

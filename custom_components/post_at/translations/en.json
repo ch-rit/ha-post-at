@@ -83,6 +83,7 @@
         "name": "Ready for pickup"
       },
       "shipment": {
+        "name": "Status",
         "state": {
           "aviso": "Announced",
           "delivery_hand_over": "Handed over",
@@ -139,6 +140,33 @@
             }
           }
         }
+      }
+    },
+    "select": {
+      "delivery_option": {
+        "name": "Delivery option",
+        "state": {
+          "standard": "Standard delivery",
+          "front_door": "In front of the house door",
+          "apartment_door": "In front of the apartment door",
+          "mailbox": "On or under the mailbox",
+          "garage": "In the garage",
+          "drop_off_place": "Drop-off place",
+          "neighbor": "Neighbor",
+          "post_office": "Post office",
+          "parcel_locker": "Parcel locker"
+        },
+        "state_attributes": {
+          "unavailability_reasons": {
+            "name": "Unavailability reasons"
+          },
+          "redirect_possible": {
+            "name": "Redirect possible"
+          }
+        }
+      },
+      "pickup_location": {
+        "name": "Pickup location"
       }
     }
   },
@@ -333,6 +361,9 @@
     },
     "shipment_not_found": {
       "message": "Shipment {tracking_number} was not found in your Post account."
+    },
+    "option_not_selectable": {
+      "message": "The delivery option {option} cannot be selected here. Use the redirect_shipment action or the Post app instead."
     }
   }
 }

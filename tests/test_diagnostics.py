@@ -39,12 +39,15 @@ async def test_diagnostics_redacted(
     assert diagnostics["entry"]["title"] == REDACTED
     assert diagnostics["last_update_success"] is True
     data = diagnostics["data"]
-    assert data["total"] == 6
-    shipment = data["shipments"][0]
+    assert data["shipments"]["total"] == 6
+    shipment = data["shipments"]["shipments"][0]
     assert shipment["tracking_number"] == REDACTED
     assert shipment["sender"] == REDACTED
     assert shipment["events"][-1]["postal_code"] == REDACTED
     assert shipment["events"][-1]["state_key"] == "inDelivery"
     assert shipment["events"][-1]["description"] == "Event inDelivery"
-    assert data["shipments"][3]["recipient"] == REDACTED
-    assert data["shipments"][3]["notification"]["claim"] == "ABHOLBEREIT"
+    assert data["shipments"]["shipments"][3]["recipient"] == REDACTED
+    assert data["shipments"]["shipments"][3]["notification"]["claim"] == "ABHOLBEREIT"
+    assert [r["tracking_number"] for r in data["redirections"]] == [REDACTED] * 3
+    assert data["branch_names"] == {"101": "Postfiliale Landstraße"}
+    assert data["places"][0] == {"key": "Vor_Haustüre", "text": "Vor der Haustüre"}

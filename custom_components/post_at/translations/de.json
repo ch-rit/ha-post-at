@@ -83,6 +83,7 @@
         "name": "Abholbereit"
       },
       "shipment": {
+        "name": "Status",
         "state": {
           "aviso": "Angekündigt",
           "delivery_hand_over": "Aufgegeben",
@@ -139,6 +140,33 @@
             }
           }
         }
+      }
+    },
+    "select": {
+      "delivery_option": {
+        "name": "Zustelloption",
+        "state": {
+          "standard": "Standardzustellung",
+          "front_door": "Vor der Haustüre",
+          "apartment_door": "Vor der Wohnungstüre",
+          "mailbox": "Auf oder unter dem Briefkasten",
+          "garage": "In der Garage",
+          "drop_off_place": "Abstellort",
+          "neighbor": "Nachbar",
+          "post_office": "Postfiliale",
+          "parcel_locker": "Abholstation"
+        },
+        "state_attributes": {
+          "unavailability_reasons": {
+            "name": "Gründe für Nichtverfügbarkeit"
+          },
+          "redirect_possible": {
+            "name": "Umleitung möglich"
+          }
+        }
+      },
+      "pickup_location": {
+        "name": "Abholort"
       }
     }
   },
@@ -333,6 +361,9 @@
     },
     "shipment_not_found": {
       "message": "Die Sendung {tracking_number} wurde in deinem Post-Konto nicht gefunden."
+    },
+    "option_not_selectable": {
+      "message": "Die Zustelloption {option} kann hier nicht gewählt werden. Verwende stattdessen die Aktion redirect_shipment oder die Post-App."
     }
   }
 }

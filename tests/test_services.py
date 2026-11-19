@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 
 import httpx
 from post_at import ApiError, AuthenticationError, GraphQLError
-from post_at.models import Place, Shipment, ShipmentRedirections
+from post_at.models import Shipment, ShipmentRedirections
 import pytest
 
 from homeassistant.core import HomeAssistant
@@ -184,18 +184,18 @@ async def test_shipment_actions(
 async def test_get_redirection_options(
     hass: HomeAssistant, init_integration: MockConfigEntry, mock_client: MagicMock
 ) -> None:
-    """The options and drop-off places are returned with plain values."""
+    """The options and the cached drop-off places are returned with plain values."""
+    mock_client.possible_redirections.reset_mock()
+    mock_client.possible_redirections.side_effect = None
     mock_client.possible_redirections.return_value = ShipmentRedirections.model_validate(
         load_fixture("possible_redirections.json")
     )
-    mock_client.places.return_value = [
-        Place(key="Vor_Haustüre", text="Vor der Haustüre"),
-        Place(key="sonstige", text="Sonstiger Ort"),
-    ]
     response = await _call(
         hass, "get_redirection_options", {"tracking_number": NUMBER}, response=True
     )
     mock_client.possible_redirections.assert_called_once_with(NUMBER)
+    # Fetched once at setup.
+    mock_client.places.assert_called_once_with()
     assert response["options"][1] == {
         "type": "PLACE",
         "state": "DISABLED",
@@ -221,6 +221,7 @@ async def test_get_redirection_options_not_found(
     hass: HomeAssistant, init_integration: MockConfigEntry, mock_client: MagicMock
 ) -> None:
     """Unknown shipments raise a validation error."""
+    mock_client.possible_redirections.side_effect = None
     mock_client.possible_redirections.return_value = None
     with pytest.raises(ServiceValidationError) as err:
         await _call(hass, "get_redirection_options", {"tracking_number": "0"}, response=True)

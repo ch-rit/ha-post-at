@@ -21,6 +21,24 @@
           "unknown": "mdi:help-box"
         }
       }
+    },
+    "select": {
+      "delivery_option": {
+        "default": "mdi:home-import-outline",
+        "state": {
+          "front_door": "mdi:door",
+          "apartment_door": "mdi:door-closed",
+          "mailbox": "mdi:mailbox",
+          "garage": "mdi:garage",
+          "drop_off_place": "mdi:map-marker",
+          "neighbor": "mdi:account-arrow-right",
+          "post_office": "mdi:store",
+          "parcel_locker": "mdi:locker-multiple"
+        }
+      },
+      "pickup_location": {
+        "default": "mdi:storefront-outline"
+      }
     }
   },
   "services": {

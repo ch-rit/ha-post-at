@@ -38,7 +38,7 @@ locker — the things you would otherwise do in the "Post" app.
   options and track any shipment by its number.
 - Re-authentication flow, options for the polling interval, and diagnostics with personal data redacted.
 
-Built on the [`post-at`](https://pypi.org/project/post-at/) Python library
+Built on the [`post-at-lib`](https://pypi.org/project/post-at-lib/) Python library
 ([source](https://github.com/ch-rit/post_at_lib)), which is just as unofficial.
 
 ## Requirements
@@ -365,7 +365,7 @@ tracking numbers are redacted, but please still look through the file before att
 
 ## Related
 
-- Python library: [`post-at` on PyPI](https://pypi.org/project/post-at/) /
+- Python library: [`post-at-lib` on PyPI](https://pypi.org/project/post-at-lib/) /
   [ch-rit/post_at_lib](https://github.com/ch-rit/post_at_lib)
 
 ## License

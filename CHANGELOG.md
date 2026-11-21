@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-11-21
+
+### Added
+
+- Photo image on parcel devices: the picture the Post takes of the parcel on the sorting conveyor.
+
+### Changed
+
+- Requires `post-at-lib` 0.2.0.
+
 ## [0.1.1] - 2026-11-21
 
 ### Added
@@ -25,5 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `post_at.add_shipment`, `post_at.remove_shipment`, `post_at.rename_shipment` and `post_at.track_shipment`.
 - Diagnostics with tokens and personal data redacted.
 
+[0.2.0]: https://github.com/ch-rit/ha-post-at/releases/tag/v0.2.0
 [0.1.1]: https://github.com/ch-rit/ha-post-at/releases/tag/v0.1.1
 [0.1.0]: https://github.com/ch-rit/ha-post-at/releases/tag/v0.1.0

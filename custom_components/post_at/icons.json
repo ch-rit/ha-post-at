@@ -1,5 +1,10 @@
 {
   "entity": {
+    "image": {
+      "photo": {
+        "default": "mdi:camera"
+      }
+    },
     "sensor": {
       "incoming": {
         "default": "mdi:package-down"

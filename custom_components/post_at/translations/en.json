@@ -62,6 +62,11 @@
     }
   },
   "entity": {
+    "image": {
+      "photo": {
+        "name": "Photo"
+      }
+    },
     "sensor": {
       "incoming": {
         "name": "Incoming shipments",

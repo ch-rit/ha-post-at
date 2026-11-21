@@ -34,6 +34,7 @@ locker — the things you would otherwise do in the "Post" app.
 - Sensors for incoming, outgoing and ready-for-pickup shipments.
 - One sensor per active shipment with its current tracking state, sender, estimated delivery and redirection,
   and one with the place the shipment was last scanned at.
+- The photo the Post takes of each parcel on the sorting conveyor, as an image on the parcel's device.
 - A `post_at_shipment_updated` event whenever a shipment changes its tracking state.
 - Actions to redirect shipments, reset redirections, add, remove and rename shipments, query redirection
   options and track any shipment by its number.
@@ -124,11 +125,16 @@ renames the device).
 | Location (sensor) | Every parcel | Place name (else postal code) of the latest tracking event that has one; unknown while the parcel is only announced. The Post reports no coordinates, so this is text, not a map position | `postal_code`, `country`, `timestamp` (when the parcel was scanned there) |
 | Delivery option (select) | Incoming parcels not delivered yet | Standard delivery or a drop-off place, see [Redirecting from the UI](#redirecting-from-the-ui) | `unavailability_reasons` (per redirection type, e.g. `PLACE: [SIGNATURE]`), `redirect_possible` |
 | Pickup location (select) | Incoming parcels not delivered yet | The post office or parcel locker the parcel is redirected to, if any | — |
+| Photo (image) | Parcels the Post took a photo of | The black-and-white photo taken of the parcel on the sorting conveyor, as shown under "Show image of the shipment" in the Post app. It usually appears once the parcel has passed a sorting centre | — |
 
 Parcel devices are created for every shipment that is not delivered yet, or that was delivered within
 the last `keep_delivered_days` days. Once a parcel is delivered its selects are removed; once it drops out
 completely the device is removed together with its entities. The Status sensor keeps the entity id of
 the per-shipment sensor of earlier versions.
+
+The photo shows the parcel's address label, including your name and address. Home Assistant serves it
+only to signed-in users, but the Post's own link to it works without a login, so it is redacted from
+diagnostics like the other personal data.
 
 The Status sensor's state is an enum of the Post tracking states (translated in the UI):
 

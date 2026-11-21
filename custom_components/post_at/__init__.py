@@ -12,7 +12,7 @@ from .coordinator import DATA_LOCKS, PostAtConfigEntry, PostAtCoordinator
 from .entity import async_register_account_device, async_setup_parcel_devices
 from .services import async_setup_services
 
-PLATFORMS: list[Platform] = [Platform.SELECT, Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.IMAGE, Platform.SELECT, Platform.SENSOR]
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 

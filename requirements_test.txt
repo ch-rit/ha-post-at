@@ -1,2 +1,2 @@
 pytest-homeassistant-custom-component==0.13.375
-post-at-lib==0.1.0
+post-at-lib==0.2.0

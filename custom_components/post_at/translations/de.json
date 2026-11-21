@@ -82,6 +82,20 @@
       "ready_for_pickup": {
         "name": "Abholbereit"
       },
+      "location": {
+        "name": "Standort",
+        "state_attributes": {
+          "postal_code": {
+            "name": "Postleitzahl"
+          },
+          "country": {
+            "name": "Land"
+          },
+          "timestamp": {
+            "name": "Erfasst am"
+          }
+        }
+      },
       "shipment": {
         "name": "Status",
         "state": {

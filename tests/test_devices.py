@@ -52,18 +52,20 @@ async def test_parcel_devices(hass: HomeAssistant, init_integration: MockConfigE
     assert device.via_device_id == account
     assert {e.unique_id for e in er.async_entries_for_device(entities, device.id)} == {
         f"{ACCOUNT_ID}_shipment_1001",
+        f"{ACCOUNT_ID}_location_1001",
         f"{ACCOUNT_ID}_delivery_option_1001",
         f"{ACCOUNT_ID}_pickup_location_1001",
     }
 
     assert _parcel_device(hass, init_integration, "1002").name == "Shop GmbH"
     assert _parcel_device(hass, init_integration, "1004").name == "1004"
-    # Outgoing and recently delivered parcels only have their status sensor.
+    # Outgoing and recently delivered parcels only have their sensors.
     for number in ("1003", "1005"):
         device = _parcel_device(hass, init_integration, number)
-        assert [e.unique_id for e in er.async_entries_for_device(entities, device.id)] == [
-            f"{ACCOUNT_ID}_shipment_{number}"
-        ]
+        assert {e.unique_id for e in er.async_entries_for_device(entities, device.id)} == {
+            f"{ACCOUNT_ID}_shipment_{number}",
+            f"{ACCOUNT_ID}_location_{number}",
+        }
     assert _parcel_device(hass, init_integration, "1006") is None
     assert devices.async_get(account).name == "user@example.com"
 

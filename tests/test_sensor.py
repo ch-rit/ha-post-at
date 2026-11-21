@@ -121,6 +121,42 @@ async def test_unknown_state_key(
     assert hass.states.get(entity_ids["2002"]).state == "delivery_hand_over"
 
 
+async def test_location_sensor(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, mock_client: MagicMock
+) -> None:
+    """The location is the latest event with a place; events without one are skipped."""
+    moving = shipment_data("3001", "aviso", "inDistribution", "inDelivery", "customsClearance")
+    events = moving["sendungsEvents"]
+    events[0].update(eventpostalcode="", eventPlaceName="")
+    events[1].update(eventpostalcode="4052", eventPlaceName="Allhaming", eventcountry="AT")
+    events[2].update(eventpostalcode="8020", eventPlaceName="", eventcountry="AT")
+    events[3].update(eventpostalcode="", eventPlaceName="")
+    announced = shipment_data("3002", "aviso")
+    announced["sendungsEvents"][0].update(eventpostalcode="", eventPlaceName="")
+    mock_client.shipments.return_value = shipment_list(moving, announced)
+    mock_config_entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(mock_config_entry.entry_id)
+    await hass.async_block_till_done()
+
+    state = hass.states.get(entity_id(hass, "location_3001"))
+    # The place name is empty, so the postal code of that event is the state.
+    assert state.state == "8020"
+    assert state.attributes[ATTR_FRIENDLY_NAME] == "Shop GmbH Location"
+    assert state.attributes["postal_code"] == "8020"
+    assert state.attributes["country"] == "AT"
+    assert state.attributes["timestamp"] == events[2]["timestamp"]
+
+    assert hass.states.get(entity_id(hass, "location_3002")).state == STATE_UNKNOWN
+
+    moving["sendungsEvents"] = events[:2]
+    mock_client.shipments.return_value = shipment_list(moving, announced)
+    await mock_config_entry.runtime_data.async_refresh()
+    await hass.async_block_till_done()
+    state = hass.states.get(entity_id(hass, "location_3001"))
+    assert state.state == "Allhaming"
+    assert state.attributes["postal_code"] == "4052"
+
+
 async def test_dynamic_shipment_sensors(
     hass: HomeAssistant, init_integration: MockConfigEntry, mock_client: MagicMock
 ) -> None:

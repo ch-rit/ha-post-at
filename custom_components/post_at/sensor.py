@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from post_at.models import Shipment
+from post_at.models import Shipment, ShipmentEvent
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -85,7 +85,10 @@ async def async_setup_entry(
         entry,
         async_add_entities,
         lambda: list(coordinator.visible_shipments()),
-        {PostAtShipmentSensor.KEY: PostAtShipmentSensor},
+        {
+            PostAtShipmentSensor.KEY: PostAtShipmentSensor,
+            PostAtShipmentLocationSensor.KEY: PostAtShipmentLocationSensor,
+        },
     )
 
 
@@ -100,6 +103,11 @@ def _shipment_summary(shipment: Shipment) -> dict[str, Any]:
         "last_update": event.timestamp.isoformat() if event else None,
         "estimated_delivery": shipment.estimated_delivery_date_text,
     }
+
+
+def _located_event(shipment: Shipment) -> ShipmentEvent | None:
+    """Return the latest event with a place or postal code; announcements have neither."""
+    return next((e for e in reversed(shipment.events) if e.place or e.postal_code), None)
 
 
 class PostAtSummarySensor(PostAtEntity, SensorEntity):
@@ -176,4 +184,33 @@ class PostAtShipmentSensor(PostAtShipmentEntity, SensorEntity):
             ),
             "weight": shipment.weight,
             "redirection": current_redirection(shipment),
+        }
+
+
+class PostAtShipmentLocationSensor(PostAtShipmentEntity, SensorEntity):
+    """Where the shipment was last scanned: the "Location" sensor of the parcel device."""
+
+    KEY = "location"
+    _attr_translation_key = "location"
+
+    def __init__(self, coordinator: PostAtCoordinator, tracking_number: str) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator, self.KEY, tracking_number)
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the place name, else the postal code, of the last located event."""
+        if self._shipment is None or (event := _located_event(self._shipment)) is None:
+            return None
+        return event.place or event.postal_code
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return the postal code, country and time of the last located event."""
+        if self._shipment is None or (event := _located_event(self._shipment)) is None:
+            return None
+        return {
+            "postal_code": event.postal_code or None,
+            "country": event.country,
+            "timestamp": event.timestamp.isoformat(),
         }

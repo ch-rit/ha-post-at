@@ -82,6 +82,20 @@
       "ready_for_pickup": {
         "name": "Ready for pickup"
       },
+      "location": {
+        "name": "Location",
+        "state_attributes": {
+          "postal_code": {
+            "name": "Postal code"
+          },
+          "country": {
+            "name": "Country"
+          },
+          "timestamp": {
+            "name": "Scanned at"
+          }
+        }
+      },
       "shipment": {
         "name": "Status",
         "state": {

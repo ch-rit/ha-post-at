@@ -32,7 +32,8 @@ locker — the things you would otherwise do in the "Post" app.
 
 - Sign in with your post.at account (e-mail and password, with a browser fallback for MFA and other prompts).
 - Sensors for incoming, outgoing and ready-for-pickup shipments.
-- One sensor per active shipment with its current tracking state, sender, estimated delivery and redirection.
+- One sensor per active shipment with its current tracking state, sender, estimated delivery and redirection,
+  and one with the place the shipment was last scanned at.
 - A `post_at_shipment_updated` event whenever a shipment changes its tracking state.
 - Actions to redirect shipments, reset redirections, add, remove and rename shipments, query redirection
   options and track any shipment by its number.
@@ -120,6 +121,7 @@ renames the device).
 | Entity | Exists for | State | Attributes |
 | --- | --- | --- | --- |
 | Status (sensor) | Every parcel | Tracking state (see below) | `tracking_number`, `sender`, `title`, `direction` (`incoming`/`outgoing`), `state_key` (raw Post state), `state_text`, `last_event_description`, `last_event_timestamp`, `estimated_delivery`, `delivery_type`, `weight`, `redirection` (`place`, `neighbor`, `post_office`, `parcel_locker` or empty) |
+| Location (sensor) | Every parcel | Place name (else postal code) of the latest tracking event that has one; unknown while the parcel is only announced. The Post reports no coordinates, so this is text, not a map position | `postal_code`, `country`, `timestamp` (when the parcel was scanned there) |
 | Delivery option (select) | Incoming parcels not delivered yet | Standard delivery or a drop-off place, see [Redirecting from the UI](#redirecting-from-the-ui) | `unavailability_reasons` (per redirection type, e.g. `PLACE: [SIGNATURE]`), `redirect_possible` |
 | Pickup location (select) | Incoming parcels not delivered yet | The post office or parcel locker the parcel is redirected to, if any | — |
 

@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/ch-rit/ha-post-at/issues",
   "loggers": ["post_at"],
   "requirements": ["post-at-lib==0.1.0"],
-  "version": "0.1.0"
+  "version": "0.1.1"
 }

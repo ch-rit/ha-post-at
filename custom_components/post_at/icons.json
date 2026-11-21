@@ -10,6 +10,9 @@
       "ready_for_pickup": {
         "default": "mdi:store-clock"
       },
+      "location": {
+        "default": "mdi:map-marker"
+      },
       "shipment": {
         "default": "mdi:package-variant-closed",
         "state": {
